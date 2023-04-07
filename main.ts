@@ -1,3 +1,19 @@
+function carArcBL () {
+    robotbit.MotorRunDual(
+    robotbit.Motors.M2A,
+    speedFwd,
+    robotbit.Motors.M1B,
+    SpeedBwd
+    )
+}
+function carArcFR () {
+    robotbit.MotorRunDual(
+    robotbit.Motors.M2B,
+    speedFwd,
+    robotbit.Motors.M1A,
+    SpeedBwd
+    )
+}
 function carForward () {
     robotbit.MotorRunDual(
     robotbit.Motors.M1A,
@@ -44,6 +60,14 @@ bluetooth.onBluetoothConnected(function () {
 bluetooth.onBluetoothDisconnected(function () {
     basic.showIcon(IconNames.No)
 })
+function carArcBR () {
+    robotbit.MotorRunDual(
+    robotbit.Motors.M2A,
+    speedFwd,
+    robotbit.Motors.M1B,
+    SpeedBwd
+    )
+}
 function serialValFwdBwd () {
     serial.writeString("valX is ")
     serial.writeLine("" + (valX))
@@ -104,6 +128,14 @@ function carFrontLeft () {
     speedFwd
     )
 }
+function carArcFL () {
+    robotbit.MotorRunDual(
+    robotbit.Motors.M2B,
+    SpeedBwd,
+    robotbit.Motors.M1A,
+    speedFwd
+    )
+}
 function carLeft () {
     robotbit.MotorRunDual(
     robotbit.Motors.M1A,
@@ -144,7 +176,11 @@ function _8buttonStrafe () {
     if (rx1 == "F") {
         carForward()
     } else if (rx1 == "FR") {
-        carFrontRight()
+        if (toggleOne == 0) {
+            carFrontRight()
+        } else {
+            carArcFR()
+        }
     } else if (rx1 == "R") {
         if (toggleOne == 0) {
             carRight()
@@ -178,8 +214,10 @@ bluetooth.onUartDataReceived(serial.delimiters(Delimiters.Comma), function () {
     } else if (rx1 == "T1") {
         if (rx2 == "1") {
             toggleOne = 1
+            basic.showNumber(1)
         } else if (rx2 == "0") {
             toggleOne = 0
+            basic.showNumber(0)
         }
     } else if (rx1 == "SX") {
         valX = Math.abs(Math.round(parseFloat(rx2.substr(0, 4))))
@@ -205,7 +243,6 @@ valX = 100
 toggleOne = 0
 basic.forever(function () {
     if (temp == 1) {
-        serialRxTx()
         if (buttonDown == 1) {
             _8buttonStrafe()
         } else if (buttonDown == 0) {
