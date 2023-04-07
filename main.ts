@@ -63,9 +63,9 @@ bluetooth.onBluetoothDisconnected(function () {
 function carArcBR () {
     robotbit.MotorRunDual(
     robotbit.Motors.M2A,
-    speedFwd,
+    SpeedBwd,
     robotbit.Motors.M1B,
-    SpeedBwd
+    speedFwd
     )
 }
 function serialValFwdBwd () {
@@ -76,6 +76,25 @@ function serialValFwdBwd () {
     serial.writeString("speedBWD is ")
     serial.writeString("" + (SpeedBwd))
     basic.pause(2000)
+}
+function _8butMode0 () {
+    if (rx1 == "F") {
+        carForward()
+    } else if (rx1 == "FR") {
+        carFrontRight()
+    } else if (rx1 == "R") {
+        carRight()
+    } else if (rx1 == "BR") {
+        carBackRight()
+    } else if (rx1 == "B") {
+        carBackward()
+    } else if (rx1 == "BL") {
+        carBackLeft()
+    } else if (rx1 == "L") {
+        carLeft()
+    } else if (rx1 == "FL") {
+        carFrontLeft()
+    }
 }
 function carRight () {
     robotbit.MotorRunDual(
@@ -172,35 +191,11 @@ function carBackLeft () {
     SpeedBwd
     )
 }
-function _8buttonStrafe () {
-    if (rx1 == "F") {
-        carForward()
-    } else if (rx1 == "FR") {
-        if (toggleOne == 0) {
-            carFrontRight()
-        } else {
-            carArcFR()
-        }
-    } else if (rx1 == "R") {
-        if (toggleOne == 0) {
-            carRight()
-        } else {
-            carClockwise()
-        }
-    } else if (rx1 == "BR") {
-        carBackRight()
-    } else if (rx1 == "B") {
-        carBackward()
-    } else if (rx1 == "BL") {
-        carBackLeft()
-    } else if (rx1 == "L") {
-        if (toggleOne == 0) {
-            carLeft()
-        } else {
-            carCounterClockWise()
-        }
-    } else if (rx1 == "FL") {
-        carFrontLeft()
+function _8buttonMove () {
+    if (toggleOne == 0) {
+        _8butMode0()
+    } else if (toggleOne == 1) {
+        _8butMode1()
     }
 }
 bluetooth.onUartDataReceived(serial.delimiters(Delimiters.Comma), function () {
@@ -225,6 +220,25 @@ bluetooth.onUartDataReceived(serial.delimiters(Delimiters.Comma), function () {
     	
     }
 })
+function _8butMode1 () {
+    if (rx1 == "F") {
+        carForward()
+    } else if (rx1 == "FR") {
+        carArcFR()
+    } else if (rx1 == "R") {
+        carClockwise()
+    } else if (rx1 == "BR") {
+        carArcBR()
+    } else if (rx1 == "B") {
+        carBackward()
+    } else if (rx1 == "BL") {
+        carArcBL()
+    } else if (rx1 == "L") {
+        carCounterClockWise()
+    } else if (rx1 == "FL") {
+        carArcFL()
+    }
+}
 let rx2 = ""
 let rx1 = ""
 let toggleOne = 0
@@ -244,7 +258,7 @@ toggleOne = 0
 basic.forever(function () {
     if (temp == 1) {
         if (buttonDown == 1) {
-            _8buttonStrafe()
+            _8buttonMove()
         } else if (buttonDown == 0) {
             robotbit.MotorStopAll()
         }
